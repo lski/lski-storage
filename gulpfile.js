@@ -10,7 +10,7 @@ gulp.task('clean', function(cb) {
 gulp.task('js', function() {
 
     return gulp.src('src/*.js')
-        .pipe(concat('lski-storagejs.min.js'))
+        .pipe(concat('lski-storage.min.js'))
         .pipe(uglify({ preserveComments: 'some' }))
         .pipe(gulp.dest('dist'));
 });
