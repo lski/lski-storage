@@ -1,5 +1,5 @@
 /*!
- * Lski-StorageJs - 0.5.4
+ * Lski-StorageJs - 0.5.5
  */
 /*jslint browser: true, white: true */
 /*global define, window */
