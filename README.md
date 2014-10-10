@@ -5,6 +5,10 @@ Simple javascript storage wrapper with optional expiry time.
 
 Can either be used directly which places a 'storage' object into the global, or defines itself using AMD
 
+#### Install
+
+bower install --save https://github.com/lski/Lski-StorageJS.git
+
 #### Usage
 
 Store a value
