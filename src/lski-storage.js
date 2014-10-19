@@ -1,5 +1,5 @@
 /*!
- * Lski-StorageJs - 0.5.5
+ * Lski-StorageJs - 0.6.0
  */
 /*jslint browser: true, white: true */
 /*global define, window */
@@ -19,19 +19,26 @@
 
 	"use strict";
 
-	var storeage;
+	var storage;
 
-	// if localStorage isnt support attempt to do an in memory store
+	// if localStorage isnt support attempt to do an in memory store, probably have to be in cookies to persistant
 	// TODO: implement the fallback
 	if (!root.localStorage || !root.localStorage.getItem) {
-		storeage = {
-			getItem: function () { },
-			setItem: function () { },
-			removeItem: function() {  }
+		storage = {
+			getItem: function(key) {
+				return storage.data[key] || null;
+			},
+			setItem: function() {
+				storage.data[key] = value;
+			},
+			removeItem: function(key) {
+				delete storage.data[key];
+			},
+			data: {}
 		};
 	}
 	else {
-		storeage = localStorage;
+		storage = localStorage;
 	}
 
 	var prefix = root.location.host + '.',
@@ -42,7 +49,7 @@
             // get
             if (arguments.length === 1) {
 
-                var raw = storeage.getItem(key);
+                var raw = storage.getItem(key);
 
                 if (raw === null) {
                     return null;
@@ -57,7 +64,7 @@
                 var now = Date.now();
 
                 if (val.expires <= now) {
-                    storeage.removeItem(key);
+                    storage.removeItem(key);
                     return null;
                 }
 
@@ -67,7 +74,7 @@
             else if (arguments.length > 1) {
 
                 if (value == null) {
-                    storeage.removeItem(key);
+                    storage.removeItem(key);
                 }
                 else {
 
@@ -79,7 +86,7 @@
                         item.expires = (options.expires * 1000) + Date.now();
                     }
 
-                    storeage.setItem(key, JSON.stringify(item));
+                    storage.setItem(key, JSON.stringify(item));
                 }
             }
 
