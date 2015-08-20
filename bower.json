@@ -1,9 +1,9 @@
 {
   "name": "lski-storage",
-  "version": "0.6.0",
-  "homepage": "https://github.com/lski/Lski-StorageJS",
+  "version": "0.6.1",
+  "homepage": "https://github.com/lski/lski-storage",
   "authors": [
-    "dev@lski.co.uk <dev@lski.co.uk>"
+    "Lee Cooper <lee.cooper@lski.uk>"
   ],
   "description": "Simple javascript storage wrapper with optional expiry time.",
   "keywords": [

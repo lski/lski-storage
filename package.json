@@ -1,6 +1,6 @@
 {
   "name": "lski-storage",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Simple javascript storage wrapper with optional expiry time.",
   "main": "src/lski-storage.js",
   "dependencies": {
@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lski/Lski-StorageJs.git"
+    "url": "https://github.com/lski/lski-storage.git"
   },
   "keywords": [
     "Storage"
   ],
-  "author": "dev@lski.co.uk",
+  "author": "Lee Cooper <lee.cooper@lski.uk>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lski/Lski-StorageJs/issues"
+    "url": "https://github.com/lski/lski-storage/issues"
   },
-  "homepage": "https://github.com/lski/Lski-StorageJs"
+  "homepage": "https://github.com/lski/lski-storage"
 }
