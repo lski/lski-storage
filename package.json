@@ -2,14 +2,16 @@
   "name": "lski-storage",
   "version": "0.6.1",
   "description": "Simple javascript storage wrapper with optional expiry time.",
-  "main": "src/lski-storage.js",
-  "dependencies": {
+  "main": "dist/lski-storage.js",
+  "devDependencies": {
     "del": "^0.1.3",
-    "gulp": "^3.8.8",
-    "gulp-concat": "^2.4.1",
-    "gulp-uglify": "^1.0.1"
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-json-editor": "^2.2.1",
+    "gulp-uglify": "^1.5.1"
   },
-  "devDependencies": {},
+  "dependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
