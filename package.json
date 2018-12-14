@@ -6,6 +6,30 @@
   "module": "dist/lski-storage.es.js",
   "js:next": "dist/lski-storage.es.js",
   "browser": "dist/lski-storage.min.js",
+  "files": [
+    "index.d.ts",
+    "dist/*.js"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lski/lski-storage.git"
+  },
+  "keywords": [
+    "Storage",
+    "localStorage",
+    "sessionStorage",
+    "cookie"
+  ],
+  "author": "Lee Cooper <lee.cooper@lski.uk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lski/lski-storage/issues"
+  },
+  "homepage": "https://github.com/lski/lski-storage",
   "devDependencies": {
     "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.2.1",
@@ -25,28 +49,5 @@
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.2.2"
-  },
-  "sideEffects": false,
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lski/lski-storage.git"
-  },
-  "keywords": [
-    "Storage",
-    "localStorage",
-    "sessionStorage",
-    "cookie"
-  ],
-  "author": "Lee Cooper <lee.cooper@lski.uk>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lski/lski-storage/issues"
-  },
-  "homepage": "https://github.com/lski/lski-storage",
-  "dependencies": {
-
   }
 }
