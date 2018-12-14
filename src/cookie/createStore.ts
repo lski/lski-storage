@@ -1,5 +1,5 @@
 import { createKey } from '../shared/createKey';
-import { IStore, SetValue } from '../iStore';
+import { IStore, SetValue } from '../types';
 
 interface CookieParams {
 	domain?: string;

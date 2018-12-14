@@ -1,5 +1,5 @@
 
-import { IStore, SetValue } from '../iStore';
+import { IStore, SetValue } from '../types';
 import { createKey } from './createKey';
 
 export interface IStored<T> {
