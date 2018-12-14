@@ -1,5 +1,3 @@
-import { local, session, cookie } from './src/index'
-
 declare namespace lski.storage {
 
 	/**
