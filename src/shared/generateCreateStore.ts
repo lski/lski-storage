@@ -1,8 +1,8 @@
 
-import { IStore, SetValue } from '../types';
 import { createKey } from './createKey';
+import { IStore, SetValue } from '../../index';
 
-export interface IStored<T> {
+interface IStored<T> {
 	/**
 	 * The time from epoch in secs where the value wont be returned after
 	 */

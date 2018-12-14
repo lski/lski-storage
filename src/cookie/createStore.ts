@@ -1,10 +1,5 @@
 import { createKey } from '../shared/createKey';
-import { IStore, SetValue } from '../types';
-
-interface CookieParams {
-	domain?: string;
-	path?: string;
-}
+import { IStore, SetValue, CookieParams } from '../../index';
 
 export function createStore<T>(name: string, namespace = '', params: CookieParams = { path: '/', domain: location.hostname }): IStore<T> {
 

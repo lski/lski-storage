@@ -10,9 +10,7 @@
 		"module": "esnext",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
-		"noImplicitAny": true,
-		"typeRoots": ["../"],
-		"traceResolutions": true
+		"noImplicitAny": true
 	},
 	"include": [
 		"./src",

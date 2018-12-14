@@ -1,6 +1,6 @@
-import babel from 'rollup-plugin-babel';
+import typescript from 'rollup-plugin-typescript2';
 import resolve from 'rollup-plugin-node-resolve';
-import { plugin as analyze } from 'rollup-plugin-analyzer'
+import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
 const input = './src/index.ts';
@@ -13,13 +13,8 @@ export default [{
 			format: 'cjs'
 		},
 		plugins: [
-			babel({
-				runtimeHelpers: true,
-				extensions
-			}),
 			resolve({ extensions }),
-			analyze()
-			//typescript()
+			typescript()
 		]
 	},
 	{
@@ -29,13 +24,21 @@ export default [{
 			format: 'esm'
 		},
 		plugins: [
-			babel({
-				runtimeHelpers: true,
-				extensions
-			}),
 			resolve({ extensions }),
-			analyze()
-			// typescript()
+			typescript()
+		]
+	},
+	{
+		input,
+		output: {
+			file: pkg.browser,
+			format: 'umd',
+			name: 'lski.storage'
+		},
+		plugins: [
+			resolve({ extensions }),
+			typescript(),
+			terser()
 		]
 	}
 ];
