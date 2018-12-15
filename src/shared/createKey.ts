@@ -1,5 +1,4 @@
 let counter = 0;
 
-export const createKey = (name: string, namespace: string | undefined) => {
-	return `${namespace || `idx${++counter}`}_${name}`;
-};
+export const createKey = (name: string | undefined) =>
+	name || `_stored_idx${++counter}`;

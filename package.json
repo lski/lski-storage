@@ -1,6 +1,6 @@
 {
   "name": "lski-storage",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "Simple javascript storage wrapper with optional expiry time.",
   "main": "dist/lski-storage.js",
   "module": "dist/lski-storage.es.js",
@@ -12,7 +12,9 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "npx rollup -c",
+    "prepublish": "npm build"
   },
   "repository": {
     "type": "git",

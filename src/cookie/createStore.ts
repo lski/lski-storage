@@ -1,16 +1,32 @@
 import { createKey } from '../shared/createKey';
 import { IStore, SetValue, CookieParams } from '../../index';
 
-export function createStore<T>(name: string, namespace = '', params: CookieParams = { path: '/', domain: location.hostname }): IStore<T> {
+export function createStore<T>(name = '', params: CookieParams = { path: '/', domain: location.hostname }): IStore<T> {
 
-	const key = encodeURIComponent(createKey(name, namespace));
+	const key = encodeURIComponent(createKey(name));
 
-	// We allow null here so that we can clear a cookie by setting it to a null value.
-	// We dont want to expose that though.
-	const set: SetValue<T | null> = (value, expiresAt) => {
+	const data = () => {
+
+		const rawCookie = document.cookie.match(`(^|;) ?${key}=([^;]*)(;|$)`);
+
+		if (!rawCookie) {
+			return null;
+		}
+
+		const decoded = decodeURIComponent(rawCookie[ 2 ]);
+
+		return extractValue<T>(decoded);
+	};
+
+	const get = () => {
+		const all = data();
+		return all === null ? null : all.value;
+	};
+
+	const set: SetValue<T> = (value, expiresAt) => {
 
 		const cookiePairs = [
-			`${key}=${createValue(value)}`
+			`${key}=${createValue(value, expiresAt)}`
 		];
 
 		if (params.path) {
@@ -35,45 +51,52 @@ export function createStore<T>(name: string, namespace = '', params: CookieParam
 		return value;
 	};
 
-	const get = () => {
-
-		const rawCookie = document.cookie.match(`(^|;) ?${key}=([^;]*)(;|$)`);
-
-		if (!rawCookie) {
-			return null;
-		}
-
-		const decoded = decodeURIComponent(rawCookie[ 2 ]);
-
-		// If nothing was stored, even a blank string would be "" via JSON.strinify for instance, then leave
-		// TODO: Investigate checking this via the expiry date as when setting it to nothing it resets the expiry time
-		// Not sure if that works tho as a quick check didnt show an expired cookie coming back with an expiry set
-		if (decoded.length === 0) {
-			return null;
-		}
-
-		return JSON.parse(decoded) as T;
-	};
-
 	const clear = () => {
-		set(null);
+		document.cookie = key + '=';
 	};
 
-	const has = () => !!get();
+	const has = () => !!data();
 
 	return {
+		data,
 		get,
-		set: set as SetValue<T>,
+		set,
 		clear,
 		has
 	};
 }
 
-const createValue = <T>(value: T | null) => {
+/**
+ * A value is a combination of valueAsJson;expiryTimeSinceEpoch. If there is no time, the semicolon separator is still added
+ * @param value The raw value to store
+ * @param expiresAt The optional number of milliseconds since epoch that this value will expire at
+ */
+const createValue = <T>(value: T, expiresAt: number | null | Date | undefined) => {
 
 	if (value === (void 0) || value === null) {
-		return '';
+		return ';';
 	}
 
-	return encodeURIComponent(JSON.stringify(value));
+	return encodeURIComponent(JSON.stringify(value) + ';' + expiresAt || '');
+};
+
+const extractValue = <T>(raw: string) => {
+
+	const indexOfSplit = raw.lastIndexOf(';');
+
+	const valueAsString = raw.substring(0, indexOfSplit);
+	const expiresAtString = raw.substring(indexOfSplit + 1);
+
+	// If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.parse
+	if (valueAsString.length === 0) {
+		return null;
+	}
+
+	const value = JSON.parse(valueAsString) as T;
+	const expiresAt = parseInt(expiresAtString, 10);
+
+	return {
+		value,
+		expiresAt: isNaN(expiresAt) ? null : expiresAt
+	};
 };

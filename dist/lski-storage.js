@@ -3,17 +3,15 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 let counter = 0;
-const createKey = (name, namespace) => {
-    return `${namespace || `idx${++counter}`}_${name}`;
-};
+const createKey = (name) => name || `_stored_idx${++counter}`;
 
 /**
  * Internal function that generates a store creator function, based on either localStorage or sessionStorage that will be used as the underlying store
  * @param internalStorage either the localStorage or sessionStorage object
  */
 const generateCreateStore = (internalStorage) => {
-    return (name, namespace = '') => {
-        const key = createKey(name, namespace);
+    return (name = '') => {
+        const key = createKey(name);
         const set = (value, expiresAt) => {
             const stored = {
                 value,
@@ -27,13 +25,17 @@ const generateCreateStore = (internalStorage) => {
             return value;
         };
         const get = () => {
+            const all = data();
+            return all === null ? null : all.value;
+        };
+        const data = () => {
             const raw = internalStorage.getItem(key);
             if (raw === null) {
                 return null;
             }
             const stored = JSON.parse(raw);
             if (stored.expiresAt === null || stored.expiresAt > Date.now()) {
-                return stored.value;
+                return stored;
             }
             internalStorage.removeItem(key);
             return null;
@@ -43,6 +45,7 @@ const generateCreateStore = (internalStorage) => {
         };
         const has = () => !!get();
         return {
+            data,
             get,
             set,
             clear,
@@ -53,13 +56,23 @@ const generateCreateStore = (internalStorage) => {
 
 const createStore = generateCreateStore(localStorage);
 
-function createStore$1(name, namespace = '', params = { path: '/', domain: location.hostname }) {
-    const key = encodeURIComponent(createKey(name, namespace));
-    // We allow null here so that we can clear a cookie by setting it to a null value.
-    // We dont want to expose that though.
+function createStore$1(name = '', params = { path: '/', domain: location.hostname }) {
+    const key = encodeURIComponent(createKey(name));
+    const data = () => {
+        const rawCookie = document.cookie.match(`(^|;) ?${key}=([^;]*)(;|$)`);
+        if (!rawCookie) {
+            return null;
+        }
+        const decoded = decodeURIComponent(rawCookie[2]);
+        return extractValue(decoded);
+    };
+    const get = () => {
+        const all = data();
+        return all === null ? null : all.value;
+    };
     const set = (value, expiresAt) => {
         const cookiePairs = [
-            `${key}=${createValue(value)}`
+            `${key}=${createValue(value, expiresAt)}`
         ];
         if (params.path) {
             cookiePairs.push('path=' + params.path);
@@ -76,36 +89,43 @@ function createStore$1(name, namespace = '', params = { path: '/', domain: locat
         document.cookie = cookiePairs.join(';');
         return value;
     };
-    const get = () => {
-        const rawCookie = document.cookie.match(`(^|;) ?${key}=([^;]*)(;|$)`);
-        if (!rawCookie) {
-            return null;
-        }
-        const decoded = decodeURIComponent(rawCookie[2]);
-        // If nothing was stored, even a blank string would be "" via JSON.strinify for instance, then leave
-        // TODO: Investigate checking this via the expiry date as when setting it to nothing it resets the expiry time
-        // Not sure if that works tho as a quick check didnt show an expired cookie coming back with an expiry set
-        if (decoded.length === 0) {
-            return null;
-        }
-        return JSON.parse(decoded);
-    };
     const clear = () => {
-        set(null);
+        document.cookie = key + '=';
     };
-    const has = () => !!get();
+    const has = () => !!data();
     return {
+        data,
         get,
-        set: set,
+        set,
         clear,
         has
     };
 }
-const createValue = (value) => {
+/**
+ * A value is a combination of valueAsJson;expiryTimeSinceEpoch. If there is no time, the semicolon separator is still added
+ * @param value The raw value to store
+ * @param expiresAt The optional number of milliseconds since epoch that this value will expire at
+ */
+const createValue = (value, expiresAt) => {
     if (value === (void 0) || value === null) {
-        return '';
+        return ';';
     }
-    return encodeURIComponent(JSON.stringify(value));
+    return encodeURIComponent(JSON.stringify(value) + ';' + expiresAt || '');
+};
+const extractValue = (raw) => {
+    const indexOfSplit = raw.lastIndexOf(';');
+    const valueAsString = raw.substring(0, indexOfSplit);
+    const expiresAtString = raw.substring(indexOfSplit + 1);
+    // If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.parse
+    if (valueAsString.length === 0) {
+        return null;
+    }
+    const value = JSON.parse(valueAsString);
+    const expiresAt = parseInt(expiresAtString, 10);
+    return {
+        value,
+        expiresAt: isNaN(expiresAt) ? null : expiresAt
+    };
 };
 
 /**
@@ -113,20 +133,6 @@ const createValue = (value) => {
  */
 const createStore$2 = generateCreateStore(sessionStorage);
 
-/**
- * Converts a relative no of milliseconds from now, to a relative no of ms from Epoch
- */
-const expiresInMs = (expiresIn) => {
-    return Date.now() + expiresIn;
-};
-/**
- * Converts a relative no of seconds from now, to a relative no of ms from Epoch. Alias of expiresIn
- */
-const expiresInSecs = (expiresIn) => {
-    return expiresInMs(expiresIn * 1000);
-};
-
 exports.local = createStore;
 exports.cookie = createStore$1;
 exports.session = createStore$2;
-exports.expiresIn = expiresInSecs;

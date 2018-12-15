@@ -1,17 +1,6 @@
 
 import { createKey } from './createKey';
-import { IStore, SetValue } from '../../index';
-
-interface IStored<T> {
-	/**
-	 * The time from epoch in secs where the value wont be returned after
-	 */
-	expiresAt: number | null;
-	/**
-	 * The actual value in storage
-	 */
-	value: T;
-}
+import { IStore, SetValue, IStored } from '../../index';
 
 /**
  * Internal function that generates a store creator function, based on either localStorage or sessionStorage that will be used as the underlying store
@@ -19,9 +8,9 @@ interface IStored<T> {
  */
 export const generateCreateStore = (internalStorage: Storage) => {
 
-	return <T>(name: string, namespace = ''): IStore<T> => {
+	return <T>(name = ''): IStore<T> => {
 
-		const key = createKey(name, namespace);
+		const key = createKey(name);
 
 		const set: SetValue<T> = (value, expiresAt) => {
 
@@ -40,6 +29,11 @@ export const generateCreateStore = (internalStorage: Storage) => {
 		};
 
 		const get = () => {
+			const all = data();
+			return all === null ? null : all.value;
+		};
+
+		const data = () => {
 
 			const raw = internalStorage.getItem(key);
 
@@ -50,7 +44,7 @@ export const generateCreateStore = (internalStorage: Storage) => {
 			const stored = JSON.parse(raw) as IStored<T>;
 
 			if (stored.expiresAt === null || stored.expiresAt > Date.now()) {
-				return stored.value;
+				return stored;
 			}
 
 			internalStorage.removeItem(key);
@@ -64,6 +58,7 @@ export const generateCreateStore = (internalStorage: Storage) => {
 		const has = () => !!get();
 
 		return {
+			data,
 			get,
 			set,
 			clear,
