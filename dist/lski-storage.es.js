@@ -1,7 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
 let counter = 0;
 const createKey = (name) => name || `_stored_idx${++counter}`;
 
@@ -133,6 +129,4 @@ const extractValue = (raw) => {
  */
 const createStore$2 = generateCreateStore(sessionStorage);
 
-exports.local = createStore;
-exports.cookie = createStore$1;
-exports.session = createStore$2;
+export { createStore as local, createStore$1 as cookie, createStore$2 as session };
