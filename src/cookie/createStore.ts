@@ -82,12 +82,12 @@ const createValue = <T>(value: T, expiresAt: number | null | Date | undefined) =
 
 const extractValue = <T>(raw: string) => {
 
-	const indexOfSplit = raw.lastIndexOf(';');
+	const idx = raw.lastIndexOf(';');
 
-	const valueAsString = raw.substring(0, indexOfSplit);
-	const expiresAtString = raw.substring(indexOfSplit + 1);
+	const valueAsString = raw.substring(0, idx);
+	const expiresAtString = raw.substring(idx + 1);
 
-	// If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.parse
+	// If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.stringify first
 	if (valueAsString.length === 0) {
 		return null;
 	}
