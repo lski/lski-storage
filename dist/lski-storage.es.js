@@ -109,10 +109,10 @@ const createValue = (value, expiresAt) => {
     return encodeURIComponent(JSON.stringify(value) + ';' + expiresAt || '');
 };
 const extractValue = (raw) => {
-    const indexOfSplit = raw.lastIndexOf(';');
-    const valueAsString = raw.substring(0, indexOfSplit);
-    const expiresAtString = raw.substring(indexOfSplit + 1);
-    // If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.parse
+    const idx = raw.lastIndexOf(';');
+    const valueAsString = raw.substring(0, idx);
+    const expiresAtString = raw.substring(idx + 1);
+    // If value was an 'empty string' then it would have been stored as `""` as it would have gone through JSON.stringify first
     if (valueAsString.length === 0) {
         return null;
     }
